@@ -1,35 +1,60 @@
-import { useState } from 'react'
-import reactLogo from './assets/react.svg'
-import viteLogo from '/vite.svg'
-import './App.css'
+import React from 'react';
+import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
+import { AuthProvider, useAuth } from './context/AuthContext';
+import MainLayout from './layouts/MainLayout';
+import ProtectedRoute from './components/ProtectedRoute';
+import Login from './pages/Login';
+import AdminDashboard from './pages/AdminDashboard';
+import TeacherDashboard from './pages/TeacherDashboard';
+import StudentDashboard from './pages/StudentDashboard';
+import ParentDashboard from './pages/ParentDashboard';
 
-function App() {
-  const [count, setCount] = useState(0)
+const AppRoutes = () => {
+  const { user } = useAuth();
 
   return (
-    <>
-      <div>
-        <a href="https://vite.dev" target="_blank">
-          <img src={viteLogo} className="logo" alt="Vite logo" />
-        </a>
-        <a href="https://react.dev" target="_blank">
-          <img src={reactLogo} className="logo react" alt="React logo" />
-        </a>
-      </div>
-      <h1>Vite + React</h1>
-      <div className="card">
-        <button onClick={() => setCount((count) => count + 1)}>
-          count is {count}
-        </button>
-        <p>
-          Edit <code>src/App.jsx</code> and save to test HMR
-        </p>
-      </div>
-      <p className="read-the-docs">
-        Click on the Vite and React logos to learn more
-      </p>
-    </>
-  )
-}
+    <Routes>
+      <Route path="/login" element={<Login />} />
 
-export default App
+      {/* Redirect root to appropriate dashboard if logged in, else login */}
+      <Route path="/" element={
+        user ? <Navigate to={`/${user.role.toLowerCase()}-dashboard`} replace /> : <Navigate to="/login" replace />
+      } />
+
+      {/* Protected Routes inside Main Layout */}
+      <Route element={<MainLayout />}>
+        <Route element={<ProtectedRoute allowedRoles={['ADMIN']} />}>
+          <Route path="/admin-dashboard" element={<AdminDashboard />} />
+        </Route>
+
+        <Route element={<ProtectedRoute allowedRoles={['TEACHER']} />}>
+          <Route path="/teacher-dashboard" element={<TeacherDashboard />} />
+        </Route>
+
+        <Route element={<ProtectedRoute allowedRoles={['STUDENT']} />}>
+          <Route path="/student-dashboard" element={<StudentDashboard />} />
+        </Route>
+
+        <Route element={<ProtectedRoute allowedRoles={['PARENT']} />}>
+          <Route path="/parent-dashboard" element={<ParentDashboard />} />
+        </Route>
+      </Route>
+
+      {/* Unauthorized / Not Found */}
+      <Route path="/unauthorized" element={<div className="p-8 text-center text-red-600">Unauthorized Access</div>} />
+      <Route path="*" element={<div className="p-8 text-center">404 - Page Not Found</div>} />
+    </Routes>
+  );
+};
+
+const App = () => {
+  return (
+    <AuthProvider>
+      <Router>
+        <AppRoutes />
+      </Router>
+    </AuthProvider>
+  );
+};
+
+export default App;
