@@ -1,40 +1,131 @@
 import { Outlet } from 'react-router-dom';
+import { BookOpen, Users, Clock, FileText, TrendingUp, TrendingDown } from 'lucide-react';
+import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip as RechartsTooltip, ResponsiveContainer, RadarChart, PolarGrid, PolarAngleAxis, PolarRadiusAxis, Radar } from 'recharts';
 
 const TeacherDashboard = () => {
-    return (
-        <div className="space-y-6 animate-fade-in">
-            <h1 className="text-3xl font-extrabold text-gray-900 tracking-tight">Teacher Portal</h1>
-            <p className="text-gray-500 mt-2">Manage your classes, attendance, and student performance.</p>
+    // Mock data for charts
+    const performanceData = [
+        { subject: '10A', avg: 82 },
+        { subject: '10B', avg: 78 },
+        { subject: '11B', avg: 85 },
+        { subject: '12A', avg: 76 },
+        { subject: '12B', avg: 88 },
+        { subject: '12C', avg: 80 },
+    ];
 
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mt-6">
-                {/* Cards with subtle gradient backgrounds for a premium feel */}
-                <div className="bg-gradient-to-br from-blue-50 to-white p-6 rounded-2xl shadow-sm border border-blue-100 hover:shadow-md transition-all pt-8 relative overflow-hidden">
-                    <div className="absolute -right-4 -top-4 w-24 h-24 bg-blue-100 rounded-full opacity-50 blur-xl"></div>
-                    <h3 className="text-sm font-medium text-blue-800 uppercase tracking-wider relative z-10">Classes Today</h3>
-                    <div className="mt-4 flex items-baseline text-4xl font-extrabold text-blue-600 relative z-10">
-                        4
-                        <span className="ml-2 text-sm font-medium text-blue-500">remaining</span>
+    const competencyData = [
+        { subject: 'Algebra', A: 90, fullMark: 100 },
+        { subject: 'Geometry', A: 85, fullMark: 100 },
+        { subject: 'Calculus', A: 70, fullMark: 100 },
+        { subject: 'Statistics', A: 80, fullMark: 100 },
+        { subject: 'Trigonometry', A: 85, fullMark: 100 },
+        { subject: 'Logic', A: 75, fullMark: 100 },
+    ];
+
+    return (
+        <div className="space-y-6 animate-fade-in w-full max-w-7xl mx-auto">
+            {/* Top Stat Cards */}
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+                <div className="bg-white p-6 rounded-2xl shadow-sm border border-gray-100 hover:shadow-md transition-shadow relative overflow-hidden group">
+                    <div className="flex justify-between items-start">
+                        <div>
+                            <p className="text-sm font-semibold text-gray-500 mb-1">My Classes</p>
+                            <h3 className="text-3xl font-extrabold text-gray-900">6</h3>
+                            <p className="text-sm font-medium text-gray-500 mt-2">
+                                All sections active
+                            </p>
+                        </div>
+                        <div className="p-3 bg-blue-50 text-blue-600 rounded-xl group-hover:scale-110 transition-transform">
+                            <BookOpen size={24} />
+                        </div>
                     </div>
                 </div>
 
-                <div className="bg-gradient-to-br from-purple-50 to-white p-6 rounded-2xl shadow-sm border border-purple-100 hover:shadow-md transition-all pt-8 relative overflow-hidden">
-                    <div className="absolute -right-4 -top-4 w-24 h-24 bg-purple-100 rounded-full opacity-50 blur-xl"></div>
-                    <h3 className="text-sm font-medium text-purple-800 uppercase tracking-wider relative z-10">Unmarked Attendance</h3>
-                    <div className="mt-4 flex items-baseline text-4xl font-extrabold text-purple-600 relative z-10">
-                        2
-                        <span className="ml-2 text-sm font-medium text-purple-500">classes</span>
+                <div className="bg-white p-6 rounded-2xl shadow-sm border border-gray-100 hover:shadow-md transition-shadow relative overflow-hidden group">
+                    <div className="flex justify-between items-start">
+                        <div>
+                            <p className="text-sm font-semibold text-gray-500 mb-1">Total Students</p>
+                            <h3 className="text-3xl font-extrabold text-gray-900">187</h3>
+                            <p className="text-sm font-medium text-emerald-600 mt-2 flex items-center gap-1">
+                                <TrendingUp size={14} /> +4 new enrollments
+                            </p>
+                        </div>
+                        <div className="p-3 bg-emerald-50 text-emerald-600 rounded-xl group-hover:scale-110 transition-transform">
+                            <Users size={24} />
+                        </div>
+                    </div>
+                </div>
+
+                <div className="bg-white p-6 rounded-2xl shadow-sm border border-gray-100 hover:shadow-md transition-shadow relative overflow-hidden group">
+                    <div className="flex justify-between items-start">
+                        <div>
+                            <p className="text-sm font-semibold text-gray-500 mb-1">Avg Attendance</p>
+                            <h3 className="text-3xl font-extrabold text-gray-900">92.4%</h3>
+                            <p className="text-sm font-medium text-emerald-600 mt-2 flex items-center gap-1">
+                                <TrendingUp size={14} /> +1.3% vs last week
+                            </p>
+                        </div>
+                        <div className="p-3 bg-orange-50 text-orange-500 rounded-xl group-hover:scale-110 transition-transform">
+                            <Clock size={24} />
+                        </div>
+                    </div>
+                </div>
+
+                <div className="bg-white p-6 rounded-2xl shadow-sm border border-gray-100 hover:shadow-md transition-shadow relative overflow-hidden group">
+                    <div className="flex justify-between items-start">
+                        <div>
+                            <p className="text-sm font-semibold text-gray-500 mb-1">Pending Grades</p>
+                            <h3 className="text-3xl font-extrabold text-gray-900">23</h3>
+                            <p className="text-sm font-medium text-red-500 mt-2 flex items-center gap-1">
+                                <TrendingDown size={14} /> 5 due today
+                            </p>
+                        </div>
+                        <div className="p-3 bg-red-50 text-red-500 rounded-xl group-hover:scale-110 transition-transform">
+                            <FileText size={24} />
+                        </div>
                     </div>
                 </div>
             </div>
 
-            <div className="mt-8 bg-white/80 backdrop-blur-md rounded-2xl shadow-sm border border-gray-100 p-6 flex flex-col md:flex-row gap-4 items-center justify-between">
-                <div>
-                    <h3 className="text-xl font-bold text-gray-800">Quick Actions</h3>
-                    <p className="text-sm text-gray-500 mt-1">Easily access your most used features.</p>
+            {/* Charts Section */}
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mt-6">
+                <div className="bg-white p-6 rounded-2xl shadow-sm border border-gray-100">
+                    <div className="flex justify-between items-center mb-6">
+                        <h3 className="text-lg font-bold text-gray-900">Class Average Performance</h3>
+                    </div>
+                    <div className="h-72 w-full">
+                        <ResponsiveContainer width="100%" height="100%">
+                            <BarChart data={performanceData} margin={{ top: 10, right: 10, left: -20, bottom: 0 }}>
+                                <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#E5E7EB" />
+                                <XAxis dataKey="subject" axisLine={false} tickLine={false} tick={{ fill: '#6B7280', fontSize: 12 }} dy={10} />
+                                <YAxis axisLine={false} tickLine={false} tick={{ fill: '#6B7280', fontSize: 12 }} domain={[60, 100]} />
+                                <RechartsTooltip
+                                    cursor={{ fill: '#F3F4F6' }}
+                                    contentStyle={{ borderRadius: '8px', border: 'none', boxShadow: '0 4px 6px -1px rgb(0 0 0 / 0.1)' }}
+                                />
+                                <Bar dataKey="avg" fill="#0052cc" radius={[4, 4, 0, 0]} barSize={40} />
+                            </BarChart>
+                        </ResponsiveContainer>
+                    </div>
                 </div>
-                <div className="flex gap-4 w-full md:w-auto">
-                    <button className="flex-1 md:flex-none px-6 py-2.5 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors shadow-sm font-medium">Mark Attendance</button>
-                    <button className="flex-1 md:flex-none px-6 py-2.5 bg-white border border-gray-200 text-gray-700 rounded-lg hover:bg-gray-50 transition-colors shadow-sm font-medium">Enter Marks</button>
+
+                <div className="bg-white p-6 rounded-2xl shadow-sm border border-gray-100">
+                    <div className="flex justify-between items-center mb-6">
+                        <h3 className="text-lg font-bold text-gray-900">Student Competency by Topic</h3>
+                    </div>
+                    <div className="h-72 w-full">
+                        <ResponsiveContainer width="100%" height="100%">
+                            <RadarChart cx="50%" cy="50%" outerRadius="70%" data={competencyData}>
+                                <PolarGrid stroke="#E5E7EB" />
+                                <PolarAngleAxis dataKey="subject" tick={{ fill: '#6B7280', fontSize: 12 }} />
+                                <PolarRadiusAxis angle={30} domain={[0, 100]} tick={{ fill: '#9CA3AF', fontSize: 10 }} />
+                                <Radar name="Competency" dataKey="A" stroke="#10B981" fill="#10B981" fillOpacity={0.3} />
+                                <RechartsTooltip
+                                    contentStyle={{ borderRadius: '8px', border: 'none', boxShadow: '0 4px 6px -1px rgb(0 0 0 / 0.1)' }}
+                                />
+                            </RadarChart>
+                        </ResponsiveContainer>
+                    </div>
                 </div>
             </div>
 
